@@ -89,7 +89,9 @@ def train_test_error(lr, features, suppress_print = False):
 
 def plot_errors(train_error, test_error, parameters):
     """
-    Plot change in train and test error for each parameter
+    Plot change in train and test error for each parameter.
+
+    Takes in lists of errors and their corresponding parameters values
     """
     plt.plot(parameters, train_error, label = "train_error")
     plt.plot(parameters, test_error, label = "test_error")
@@ -99,7 +101,9 @@ def plot_errors(train_error, test_error, parameters):
     plt.ylabel("Error")
     plt.show()
 
-def get_sorted_importances(lr, xtrain, ytrain, feature_names):
+def get_sorted_importances(lr, feature_names):
+    xtrain = lr["train_data"][feature_names]
+    ytrain = lr["train_data"][binary_class_label]
     importances_mean = permutation_importance(lr["model"], xtrain, ytrain)["importances_mean"]
     importances = pd.DataFrame(data = importances_mean, columns = ["mean_importance"])
     importances["feature_name"] = feature_names
@@ -112,4 +116,18 @@ def plot_sorted_importances(sorted_importances, top_k = 10):
     plt.title("Mean Permutation Feature Importances")
     plt.xlabel("Feature Name")
     plt.ylabel("Mean Permutation Importance")
+    plt.xticks(rotation=90)
     plt.show()
+
+
+def find_top_k_performing_important_features(data, features_by_importance):
+    train_error = []
+    test_error = []
+    parameters = range(1, len(features_by_importance))
+    for k in parameters:
+        top_k_features = list(features_by_importance.head(k)["feature_name"])
+        top_k_odds_lr = logistic_regression(data[top_k_features + [binary_class_label]], top_k_features, suppress_print=True)
+        tr_err, te_err = train_test_error(top_k_odds_lr, top_k_features, suppress_print=True)
+        train_error.append(tr_err)
+        test_error.append(te_err)
+    return list(features_by_importance.head(np.argmin(np.array(test_error)) + 1)["feature_name"]), (train_error, test_error, parameters)

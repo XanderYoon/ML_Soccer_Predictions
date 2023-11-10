@@ -25,25 +25,11 @@ class OddsPredictor():
         lr = helpers.logistic_regression(self.odds_data, self.odds_features, suppress_print=True)
         xtrain = lr["train_data"][self.odds_features]
         ytrain = lr["train_data"][self.binary_class_label]
-        features_by_importance = helpers.get_sorted_importances(lr, xtrain, ytrain, self.odds_features)
-        self.top_k_features = self.__find_best_performing_features(features_by_importance)
+        features_by_importance = helpers.get_sorted_importances(lr, self.odds_features)
+        self.top_k_features = helpers.find_top_k_performing_important_features(self.odds_data, features_by_importance)[0]
         lr_top_k = helpers.logistic_regression(self.odds_data[self.top_k_features + [self.binary_class_label]], self.top_k_features)
         self.model_lr = lr_top_k
         print(self.top_k_features)
-
-    def __find_best_performing_features(self, features_by_importance):
-        """
-        Find best performing features that minimize test error.
-        """
-        train_error = []
-        test_error = []
-        for k in range(1, len(self.odds_features)):
-            top_k_features = list(features_by_importance.head(k)["feature_name"])
-            top_k_odds_lr = helpers.logistic_regression(self.odds_data[top_k_features + [self.binary_class_label]], top_k_features, suppress_print=True)
-            tr_err, te_err = helpers.train_test_error(top_k_odds_lr, top_k_features, suppress_print=True)
-            train_error.append(tr_err)
-            test_error.append(te_err)
-        return list(features_by_importance.head(np.argmin(np.array(test_error)) + 1)["feature_name"])
 
     def evaluators(self):
         if self.model_lr:
