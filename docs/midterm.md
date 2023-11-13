@@ -64,11 +64,95 @@ As a rule of thumb, we will target 60% accuracy for rankings, as there is a very
 ### Logistic Regression Results
 #### Betting Odds Features
 
+On initial training with all 30 features (home win, away win, draw odds from 10 providers), the following results were yielded:
+
+| __Metric__ | __Value__ |
+| -- | -- |
+| Train Error | 0.35403 |
+| Test Error | 0.30435 |
+
+The error was calculated by using the Jaccard similarity of the predicted labels and actual labels using the training and testing data as the accuracy metric. The Jaccard similarity was chosen because of the uniform nature of the actual labels in the binary classification problem – approximately 45% of the games in the Match dataset have a label of home_team_win = 1. The Jaccard similarity, $J$, s defined as follows for the two sets of actual and predicted labels, $Y$ and $\hat Y$ respectively: $$J(Y, \hat Y) = \frac{|Y \cap \hat Y|}{|Y \cup \hat Y|}$$
+So, the error is computed as $\texttt{error} = 1 - J(Y, \hat Y)$. Now, the following are the top 10 features by mean permutation importance in the model.
+
+![](feature_importance_odds.png)
+
+This clues us in to which betting odds providers give more valuable odds when it comes to predicting sports outcomes, and in a way can tell a user which provider to trust. When retraining the logistic using the top $k$ features by importance, we see the following train/test error.
+
+![](error_analysis_odds.png)
+
+We see that a logistic regression model performs the best when choosing the top 3 or 4 models as it minimizes the test error. Picking the top three features (SJA, B365H, VCD) we get a Jaccard similarity on testing data of 0.707, or 70.7% accuracy in predicting match outcomes! Our RMSE is 0.2935. Train/test error is fairly low, and accuracy is high, so there is good confidence in these results.
+
+It was hypothesized that due to the similar train/test error that the model could be underfitting, so additional feature engineering was attempted through introducing polynomial features. Upon varying the highest degree, we visualized the errors:
+
+![](error_analysis_poly_odds.png)
+
+The lowest train and test error are curiously seen at max degree 1, so polynomial features are not the best approach. Ultimately, we settle with a 70% accuracy predictor using logistic regression trained on betting odds data!
+
 #### Team-Based Features
+
+The team-based FIFA attributes are separated into three categories, which have three features each:
+1. Build-up Play
+    1. buildUpPlaySpeed
+    2. buildUpPlayDribbling
+    3. buildUpPlayPassing
+2. Chance Creation
+    1. chanceCreationPassing
+    2. chanceCreationCrossing
+    3. chanceCreationShooting
+3. Defence
+    1. defencePressure
+    2. defenceAggression
+    3. defenceTeamWidth
+Each of these features were then aggregated into mean, median, min, and max values per team from the Team_attributes table, as each team has multiple entries in the table. So, we end up with 36 attribute features.
 
 ##### Feature Selection and Training by Importance
 
+Initial training on all team-based attribute features yielded the following errors on training and testing data:
+
+| __Metric__ | __Value__ |
+| -- | -- |
+| Train Error | 0.36822 |
+| Test Error | 0.44886 |
+
+This results in a Jaccard index accuracy on the test data of 0.5511, or around 55%, which is lower than the betting odds data. We again evaluate the top ten features by permutation importance and we get:
+
+![](feature_importance_attr.png)
+
+We see that attributes relating to defense and chance creation are much more valuable than build up speed. Performing the same error analysis by varying the top “k” features used in training yields the following plot:
+
+![](error_analysis_attr.png)
+
+There is much greater fluctuation in test error, although train error decreases sharply (by around 0.08) as more features are chosen. By retraining the model on the top ~25 features which minimizes test error, we get a slight decrease in test error (new error = 0.3625 from old error = 0.3682), a decrease of only 1.55%, which is not significant.
+
 ##### By-Category Feature Selection and Training
+
+A more manual feature-selection approach was used to improve the accuracy of the model. Manually training the feature on each individual category yielded the following:
+
+| __Feature Category__ | __Metric__ | __Value__ |
+| -- | -- | -- |
+| Build-up Play | RMSE on test | 0.42613636363636365 |
+| | Accuracy on test | 0.5738636363636364 |
+| Chance Creation | RMSE on test | 0.4090909090909091 |
+| | Accuracy on test | 0.5909090909090909 |
+| Defense | RMSE on test | 0.5113636363636364 |
+| | Accuracy on test | 0.48863636363636365 |
+
+Chance creation seems to be the top performing category with a 59% accuracy, a good 4% increase from the previous accuracy score. However, we can do better using the important feature selection metrics. Sorting the chance creation aggregations by importance yields the following:
+
+![](feature_importance_chance_creation.png)
+
+The error fluctuates with respect to the top number of features chosen as follows:
+
+![](error_analysis_chance_creation.png)
+
+Test error is very clearly minimized using the top 6 features. Retraining the model using the top 6 most important features results in a Jaccard similarity of 0.6134, which tells us we have a 61% accurate logistic regression predictor based solely on the FIFA video game series team aggregate chance creation metrics! We are happy here because our 61% accuracy is sufficient based on our heuristics.
+
+Here is a visualization plotting the top two features against the probability of the match being a home team win:
+
+![](chance_creation_prob.png)
+
+We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right
+
 
 ### Random Forest Results
 
