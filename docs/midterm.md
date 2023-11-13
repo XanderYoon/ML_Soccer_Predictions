@@ -3,7 +3,7 @@
     tex2jax: {
       inlineMath: [['\\(','\\)'], ['$', '$']],
       displayMath: [['\\[','\\]'], ['$$', '$$']],
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      <!-- skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'], -->
     }
   });
 </script>
