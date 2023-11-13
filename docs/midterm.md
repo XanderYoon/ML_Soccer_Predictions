@@ -54,6 +54,7 @@ For the betting odds and team attribute based features, the following methodolog
 4. Evaluate feature importance
 5. Determine top $k$ features based on importance which minimize test error and retrain
 6. Evaluate performance and accuracy
+
 The feature importance was evaluated using Permutation Feature Importance. The permutation feature importance metric randomly shuffles individual features one-by-one and measures the variation in the evaluation score. The features with higher variation are more important, while features with lower variation are less important (scikit-learn developers, n.d.). Additional steps were performed in some other sections.
 
 ### Random Forest Methods
@@ -163,7 +164,7 @@ See link above
 ### Conclusions
 To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 70% accurate logistic regression trained on 25 betting odds features
-* 61% accurate logistic regression trained on 6 FIFA team chance creation features 
+* 61% accurate logistic regression trained on 6 FIFA team chance creation features
 
 
 ## Contributors
