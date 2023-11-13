@@ -2,7 +2,7 @@
   MathJax.Hub.Config({
     tex2jax: {
       inlineMath: [['\\(','\\)'], ['$', '$']],
-      displayMath: [['\\[','\\]']], ['$$', '$$'],
+      displayMath: [['\\[','\\]'], ['$$', '$$']],
       skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
     }
   });
