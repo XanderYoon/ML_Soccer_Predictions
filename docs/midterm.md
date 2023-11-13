@@ -159,6 +159,12 @@ We see that higher lower probabilities (darker colors) tend towards the left end
 ## [Timeline](https://gtvault-my.sharepoint.com/:x:/g/personal/sajjan3_gatech_edu/EZLBLWmNKIlOhDSoWb220_8B6iRV6UzX8bXvDjJ6bf01vA?e=dXrga7)
 See link above
 
+### Conclusions
+To conclude, we see the following sufficiently accurate (>60% accuracy) models:
+* 70% accurate logistic regression trained on 25 betting odds features
+* 61% accurate logistic regression trained on 6 FIFA team chance creation features 
+
+
 ## Contributors
 
 | Name | Contribution |
