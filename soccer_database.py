@@ -2,6 +2,7 @@
 
 import pandas
 import sqlite3
+from typing import List
 
 # create soccer database class
 class SoccerDatabase:
@@ -110,8 +111,18 @@ class MatchDataManager:
         away_team_id = match_data["away_team_api_id"].values[0]
         home_team_data = self.capture_team_data(home_team_id, date)
         away_team_data = self.capture_team_data(away_team_id, date)
+        # get team previous match data
+        home_team_prev_matches = self.capture_n_prev_matches(home_team_id, date, 5)
+        away_team_prev_matches = self.capture_n_prev_matches(away_team_id, date, 5)
+        
+        # get home team record from previous matches
+        home_team_record = [match_data.get_game_result_for_team(home_team_id) for match_data in home_team_prev_matches]
+        home_team_record = sum(home_team_record) / len(home_team_record)
+        # get away team record from previous matches
+        away_team_record = [match_data.get_game_result_for_team(away_team_id) for match_data in away_team_prev_matches]
+        away_team_record = sum(away_team_record) / len(away_team_record)
 
-        self.capture_team_data(self.match_id)
+    
 
         
     def capture_team_data(self, team_id: int, date: str) -> TeamManager:
@@ -124,3 +135,43 @@ class MatchDataManager:
         team_manager.load_team_data()
         # return team manager object
         return team_manager
+    
+    def capture_n_prev_matches(self, team_id: int, date: str, n: int) -> List["MatchDataManager"]:
+        # query for matches with team_id
+        matches = self.sdb.get_pandas_df("Match")
+        matches = matches[(matches["home_team_api_id"] == team_id) | (matches["away_team_api_id"] == team_id)]
+        # sort matches by date
+        matches = matches.sort_values(by="date")
+        # get index of current match
+        current_match_index = matches[matches["id"] == self.match_id].index[0]
+        # get previous matches
+        prev_matches = matches.iloc[:current_match_index]
+        # get n previous matches
+        n_prev_matches = prev_matches.iloc[-n:]
+        # return matches
+        return [MatchDataManager(self.sdb, match_id) for match_id in n_prev_matches["id"].values]
+    
+    def get_game_result_for_team(self, team_id: int):
+        home_team_id = self.match_data["home_team_api_id"]
+        away_team_id = self.match_data["away_team_api_id"]
+
+        assert team_id == home_team_id or team_id == away_team_id, "team_id must be either home or away team"
+        
+        home_goals = self.match_data["home_team_goal"]
+        away_goals = self.match_data["away_team_goal"]
+
+        if team_id == home_team_id:
+            if home_goals > away_goals:
+                return 1
+            elif home_goals == away_goals:
+                return 0
+            else:
+                return -1
+            
+        elif team_id == away_team_id:
+            if away_goals > home_goals:
+                return 1
+            elif away_goals == home_goals:
+                return 0
+            else:
+                return -1
