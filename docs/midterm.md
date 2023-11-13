@@ -86,7 +86,10 @@ On initial training with all 30 features (home win, away win, draw odds from 10 
 | Train Error | 0.35403 |
 | Test Error | 0.30435 |
 
-The error was calculated by using the Jaccard similarity of the predicted labels and actual labels using the training and testing data as the accuracy metric. The Jaccard similarity was chosen because of the uniform nature of the actual labels in the binary classification problem – approximately 45% of the games in the Match dataset have a label of home_team_win = 1. The Jaccard similarity, $J$, s defined as follows for the two sets of actual and predicted labels, $Y$ and $\hat Y$ respectively: $$J(Y, \hat Y) = \frac{|Y \cap \hat Y|}{|Y \cup \hat Y|}$$
+The error was calculated by using the Jaccard similarity of the predicted labels and actual labels using the training and testing data as the accuracy metric. The Jaccard similarity was chosen because of the uniform nature of the actual labels in the binary classification problem – approximately 45% of the games in the Match dataset have a label of home_team_win = 1. The Jaccard similarity, $J$, s defined as follows for the two sets of actual and predicted labels, $Y$ and $\hat Y$ respectively:
+
+$$J(Y, \hat Y) = \frac{|Y \cap \hat Y|}{|Y \cup \hat Y|}$$
+
 So, the error is computed as $\texttt{error} = 1 - J(Y, \hat Y)$. Now, the following are the top 10 features by mean permutation importance in the model.
 
 ![](feature_importance_odds.png)
