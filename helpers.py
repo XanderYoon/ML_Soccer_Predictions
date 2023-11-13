@@ -87,7 +87,7 @@ def train_test_error(lr, features, suppress_print = False):
         print(f"Train Error = {train_error}\nTest Error = {test_error}")
     return train_error, test_error
 
-def plot_errors(train_error, test_error, parameters):
+def plot_errors(train_error, test_error, parameters, title = "Train vs Test Error w.r.t parameter", xlabel = "Parameter", ylabel = "Error"):
     """
     Plot change in train and test error for each parameter.
 
@@ -96,9 +96,9 @@ def plot_errors(train_error, test_error, parameters):
     plt.plot(parameters, train_error, label = "train_error")
     plt.plot(parameters, test_error, label = "test_error")
     plt.legend()
-    plt.title("Train vs Test Error w.r.t parameter")
-    plt.xlabel("Parameter")
-    plt.ylabel("Error")
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
 
 def get_sorted_importances(lr, feature_names):
