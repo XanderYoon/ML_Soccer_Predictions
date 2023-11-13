@@ -151,7 +151,7 @@ Here is a visualization plotting the top two features against the probability of
 
 ![](chance_creation_prob.png)
 
-We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right
+We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right.
 
 
 ### Random Forest Results
