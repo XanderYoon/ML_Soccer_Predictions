@@ -187,9 +187,6 @@ The outcomes of the individual features are detailed below:
 
 Subsequent to these findings, we pondered the notion that the disparity in features between the two teams might hold more significance. In practical terms, considering the height difference between two teams (e.g., 6' players vs. 5' players) could potentially have a more substantial impact than merely assessing the features at "face value" (which would overlook the nuances of a 6' vs. 6' scenario).
 
-![image](https://github.com/dsoman24/ml-project/assets/146145881/677e2afc-edfa-4183-b000-bc2c1a2f6568)
-
-
 The outcomes for the differences in features are outlined below:
 
 |           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential |
