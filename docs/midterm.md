@@ -196,13 +196,13 @@ See link above
 
 ## Contributors
 
-| Name | Contribution |
+| Name | Contribution to Midterm |
 | -- | -- |
-| Daniel | Introduction, Logistic Regression (betting odds and team based features)|
-| Elijah | Problem Definition, Random Forest|
-| Sabina | Timeline, slides for video, Random Forest|
-| Xander | Potential Results and Discussion, Logistic Regression (player based features) |
-| Matthew | Methods, Random Forest|
+| Daniel | Logistic Regression (betting odds and team based features)|
+| Elijah | Random Forest|
+| Sabina | Random Forest|
+| Xander | Logistic Regression (player based features) |
+| Matthew | Random Forest, Database Feature Extraction |
 
 ## References
 Horvat, T., & Job, J. (2020). The use of machine learning in sport outcome prediction: A review. WIREs Data Mining and Knowledge Discovery, 10(5). https://doi.org/10.1002/widm.1380
