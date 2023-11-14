@@ -224,7 +224,7 @@ Given the relatively low performance and comparable results between the test and
 
 ### Random Forest Results
 
-# Betting Odds Features
+#### Betting Odds Features
 On initial training with all 30 features (home win, away win, draw odds from 10 providers), we found that the raw accuracy of the Random Forest Classifier was roughly 63%, however it varied anywhere from 60% to 65%. We then used RandomizedSearchCV from sklearn in order to identify the optimal max depth and number of trees in each forest. This not only allowed for greater testing accuracy by increasing the number of trees from the default of 100 to roughly 400, but also decreased the overfitting which was being caused by there being no maximum depth. This led the training accuracy to drop from 100 to around 75, but the test accuracy jumped up to being consistently in the mid 60s (65-67). From these results we created a basic confusion matrix to break down the Random Forests ability to classify True Positives and True Negatives. In the matrix below, the accuracy was .670, the precision was 0.6758, and the recall was .50.
 ![](confusion_matrix.png)
 
@@ -241,15 +241,13 @@ After running the model on all the team attribute features, we tried running the
 Here are the “most important” features chosen that were used for the last optimized random forest model: 
 ![](most_important.png)
 
+Here is a summary of our findings in this section:
 
 | Attributes | Metric Used | Before HyperParameter Tuning | After HyperParameter Tuning |
 |--|--|--|--|
 | Betting Odds | Accuracy Score | 63% | 66% |
 | Team Attributes | Accuracy Score | 57% | 59% |
 | Buildup | Accuracy Score | 50.7% | 56% |
-
-
-
 
 
 ### Conclusions
