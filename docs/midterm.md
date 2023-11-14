@@ -187,6 +187,11 @@ The outcomes of the individual features are detailed below:
 
 Subsequent to these findings, we pondered the notion that the disparity in features between the two teams might hold more significance. In practical terms, considering the height difference between two teams (e.g., 6' players vs. 5' players) could potentially have a more substantial impact than merely assessing the features at "face value" (which would overlook the nuances of a 6' vs. 6' scenario).
 
+![](height_regression_graph.png)
+![](weight_regression_graph.png)
+![](potential_regression_graph.png)
+![](rating_regression_graph.png)
+
 The outcomes for the differences in features are outlined below:
 
 |           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential |
