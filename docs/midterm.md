@@ -172,6 +172,43 @@ Here is a visualization plotting the top two features against the probability of
 
 We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right.
 
+#### Player Based Features ####
+
+Given our adoption of a binary approach to results (win vs. loss/draw), we deemed it most fitting to employ a logistic regression model for each of the features under examination. The focus of our analysis was on player-related attributes, specifically player height, weight, overall rating, and potential. To ensure the optimal representation of a team, we calculated the averages of these features per team. This approach was chosen with the expectation that it would yield the most accurate predictions for match outcomes.
+
+While it's plausible to argue for the impact of a "superstar" or players with exceptional talents who might "carry" the team, considering only the highest or top three (arbitrarily chosen) values for each feature, we opted against this approach. This decision was influenced by the already limited number of features and the observed subpar model performance, a matter we will address later on.
+
+The outcomes of the individual features are detailed below:
+
+
+|           | Height  | Weight  | Rating   | Potential |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.59887 | 0.59887 | 0.627118 | 0.632768  |
+
+Subsequent to these findings, we pondered the notion that the disparity in features between the two teams might hold more significance. In practical terms, considering the height difference between two teams (e.g., 6' players vs. 5' players) could potentially have a more substantial impact than merely assessing the features at "face value" (which would overlook the nuances of a 6' vs. 6' scenario).
+
+![image](https://github.com/dsoman24/ml-project/assets/146145881/677e2afc-edfa-4183-b000-bc2c1a2f6568)
+
+
+The outcomes for the differences in features are outlined below:
+
+|           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |
+
+
+Surprisingly, the performance for height, weight, Δ height, and Δ weight were all identical—situated just under the 60% mark, which aligns with our 60% goal but leaves room for improvement. On the other hand, Δ Potential exhibited a performance increase, albeit marginal and practically negligible.
+
+Looking ahead, our strategies to enhance performance include:
+
+Addressing Multicollinearity:
+Our initial step toward performance improvement involves mitigating multicollinearity. Given the identical performance of height and weight, we propose removing one or both of these features, considering their lackluster absolute performance. Additionally, we plan to implement a multivariate logistic regression and compare its results with those of a Lasso model, both known for their suitability in low-dimensional datasets. The plan is to systematically remove either height or weight based on a criterion such as the higher root mean square error (RMSE) and assess the impact on logistic regression outcomes.
+
+Regularization of Data:
+Given the substantial range and differences in values between height/weight and potential/ratings, regularization becomes imperative. We intend to apply Sci-Kit Learn's MinMaxScaler() function to standardize the data.
+
+Addressing Underfitting:
+Given the relatively low performance and comparable results between the test and training sets, treating the model as potentially underfitting is warranted. To address this, we plan to integrate team performance with player performance, thereby augmenting the feature count and potentially alleviating underfitting issues.
 
 ### Random Forest Results
 
