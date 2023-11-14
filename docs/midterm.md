@@ -1,3 +1,16 @@
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['\\(','\\)'], ['$', '$']],
+      displayMath: [['\\[','\\]'], ['$$', '$$']],
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    }
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
 [Back to home](index.md)
 
 # Midterm Report
@@ -40,6 +53,7 @@ Researchers have used many different machine learning algorithms to predict spor
 1. Logistic Regression
 2. Random Forest
 3. Artificial Neural Network
+
 Logistic regression models not only can be used for win/loss classification, but also give confidence in the model's decision. A random forest approach achieved an impressive 83% accuracy, and other random forest or decision tree models also outperformed regression based models (Wilkens, 2021). Lastly, artificial neural networks have shown strong results and require less preprocessing on inputs than other models (Hubáček et al., 2019).
 
 We have trained our models on our various feature sets defined in the data collection. Each time we train the model, we perform a random sampling to generate our train dataset and test dataset. Our logistic regression models utilized a 90% train / 10% test split on the Match data table. The main data table contains ~26000 data points, so a 90% train / 10% split would result in ~23400 training records and ~2600 testing records. We handled missing values by dropping rows containing them, so our resulting training data would have less entries.
@@ -54,6 +68,7 @@ For the betting odds and team attribute based features, the following methodolog
 4. Evaluate feature importance
 5. Determine top $k$ features based on importance which minimize test error and retrain
 6. Evaluate performance and accuracy
+
 The feature importance was evaluated using Permutation Feature Importance. The permutation feature importance metric randomly shuffles individual features one-by-one and measures the variation in the evaluation score. The features with higher variation are more important, while features with lower variation are less important (scikit-learn developers, n.d.). Additional steps were performed in some other sections.
 
 ### Random Forest Methods
@@ -72,7 +87,10 @@ On initial training with all 30 features (home win, away win, draw odds from 10 
 | Train Error | 0.35403 |
 | Test Error | 0.30435 |
 
-The error was calculated by using the Jaccard similarity of the predicted labels and actual labels using the training and testing data as the accuracy metric. The Jaccard similarity was chosen because of the uniform nature of the actual labels in the binary classification problem – approximately 45% of the games in the Match dataset have a label of home_team_win = 1. The Jaccard similarity, $J$, s defined as follows for the two sets of actual and predicted labels, $Y$ and $\hat Y$ respectively: $$J(Y, \hat Y) = \frac{|Y \cap \hat Y|}{|Y \cup \hat Y|}$$
+The error was calculated by using the Jaccard similarity of the predicted labels and actual labels using the training and testing data as the accuracy metric. The Jaccard similarity was chosen because of the uniform nature of the actual labels in the binary classification problem – approximately 45% of the games in the Match dataset have a label of home_team_win = 1. The Jaccard similarity, $J$, is defined as follows for the two sets of actual and predicted labels, $Y$ and $\hat Y$ respectively:
+
+$$J(Y, \hat Y) = \frac{|Y \cap \hat Y|}{|Y \cup \hat Y|}$$
+
 So, the error is computed as $\texttt{error} = 1 - J(Y, \hat Y)$. Now, the following are the top 10 features by mean permutation importance in the model.
 
 ![](feature_importance_odds.png)
@@ -152,23 +170,73 @@ Here is a visualization plotting the top two features against the probability of
 
 ![](chance_creation_prob.png)
 
-We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right
+We see that higher lower probabilities (darker colors) tend towards the left end while higher probabilities (lighter colors) tend towards the right.
 
+#### Player Based Features ####
+
+Given our adoption of a binary approach to results (win vs. loss/draw), we deemed it most fitting to employ a logistic regression model for each of the features under examination. The focus of our analysis was on player-related attributes, specifically player height, weight, overall rating, and potential. To ensure the optimal representation of a team, we calculated the averages of these features per team. This approach was chosen with the expectation that it would yield the most accurate predictions for match outcomes.
+
+While it's plausible to argue for the impact of a "superstar" or players with exceptional talents who might "carry" the team, considering only the highest or top three (arbitrarily chosen) values for each feature, we opted against this approach. This decision was influenced by the already limited number of features and the observed subpar model performance, a matter we will address later on.
+
+The outcomes of the individual features are detailed below:
+
+
+|           | Height  | Weight  | Rating   | Potential |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.59887 | 0.59887 | 0.627118 | 0.632768  |
+
+Subsequent to these findings, we pondered the notion that the disparity in features between the two teams might hold more significance. In practical terms, considering the height difference between two teams (e.g., 6' players vs. 5' players) could potentially have a more substantial impact than merely assessing the features at "face value" (which would overlook the nuances of a 6' vs. 6' scenario).
+
+The outcomes for the differences in features are outlined below:
+
+|           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |
+
+
+Surprisingly, the performance for height, weight, Δ height, and Δ weight were all identical—situated just under the 60% mark, which aligns with our 60% goal but leaves room for improvement. On the other hand, Δ Potential exhibited a performance increase, albeit marginal and practically negligible.
+
+Looking ahead, our strategies to enhance performance include:
+
+Addressing Multicollinearity:
+Our initial step toward performance improvement involves mitigating multicollinearity. Given the identical performance of height and weight, we propose removing one or both of these features, considering their lackluster absolute performance. Additionally, we plan to implement a multivariate logistic regression and compare its results with those of a Lasso model, both known for their suitability in low-dimensional datasets. The plan is to systematically remove either height or weight based on a criterion such as the higher root mean square error (RMSE) and assess the impact on logistic regression outcomes.
+
+Regularization of Data:
+Given the substantial range and differences in values between height/weight and potential/ratings, regularization becomes imperative. We intend to apply Sci-Kit Learn's MinMaxScaler() function to standardize the data.
+
+Addressing Underfitting:
+Given the relatively low performance and comparable results between the test and training sets, treating the model as potentially underfitting is warranted. To address this, we plan to integrate team performance with player performance, thereby augmenting the feature count and potentially alleviating underfitting issues.
 
 ### Random Forest Results
+
+
+### Conclusions
+To conclude, we see the following sufficiently accurate (>60% accuracy) models:
+* 70% accurate logistic regression trained on 25 betting odds features
+* 61% accurate logistic regression trained on 6 FIFA team chance creation features
+
+
+## Next Steps
+* Replace manual feature extraction with a database class abstraction to handle pulling data from multiple tables in one feature table
+* Train another linear regression model on matchday team attributes (e.g. starting formation shape)
+* Train another linear regression model on a team's historical performance (e.g. win/loss record, historical number of yellow/red cards, etc.)
+* Build an artificial neural network with many hyperparameters to predict match outcome
+* Construct betting odds from model results
+
+
 
 ## [Timeline](https://gtvault-my.sharepoint.com/:x:/g/personal/sajjan3_gatech_edu/EZLBLWmNKIlOhDSoWb220_8B6iRV6UzX8bXvDjJ6bf01vA?e=dXrga7)
 See link above
 
 ## Contributors
 
-| Name | Contribution |
+| Name | Contribution to Midterm |
 | -- | -- |
-| Daniel | Introduction, Logistic Regression (betting odds and team based features)|
-| Elijah | Problem Definition, Random Forest|
-| Sabina | Timeline, slides for video, Random Forest|
-| Xander | Potential Results and Discussion, Logistic Regression (player based features) |
-| Matthew | Methods, Random Forest|
+| Daniel | Logistic Regression (betting odds and team based features)|
+| Elijah | Random Forest|
+| Sabina | Random Forest|
+| Xander | Logistic Regression (player based features) |
+| Matthew | Random Forest, Database Feature Extraction |
 
 ## References
 Horvat, T., & Job, J. (2020). The use of machine learning in sport outcome prediction: A review. WIREs Data Mining and Knowledge Discovery, 10(5). https://doi.org/10.1002/widm.1380

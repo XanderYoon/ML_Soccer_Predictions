@@ -1,6 +1,6 @@
 [Back to home](index.md)
 
-# Midterm Report
+# Proposal Report
 ## Introduction
 Soccer is the most popular sport in the world, with an estimated 240 million registered players worldwide, and there is undoubtedly a lot of data present (Terrell, 2022).
 
