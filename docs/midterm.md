@@ -219,6 +219,7 @@ Given the relatively low performance and comparable results between the test and
 To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 70% accurate logistic regression trained on 25 betting odds features
 * 61% accurate logistic regression trained on 6 FIFA team chance creation features
+* 61% accurate logistic regression trained on 4 player attribute feautres
 
 
 ## Next Steps
