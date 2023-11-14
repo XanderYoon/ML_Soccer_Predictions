@@ -72,6 +72,16 @@ For the betting odds and team attribute based features, the following methodolog
 The feature importance was evaluated using Permutation Feature Importance. The permutation feature importance metric randomly shuffles individual features one-by-one and measures the variation in the evaluation score. The features with higher variation are more important, while features with lower variation are less important (scikit-learn developers, n.d.). Additional steps were performed in some other sections.
 
 ### Random Forest Methods
+We trained Random Forest models also on different sets of features: betting odds, team attributes, and build up stats. We used Scikit_Learn’s Random Forest Model instance to be able to predict outcomes of matches based on these different features.
+
+This is the main process we followed to obtain a measurement of the likelihood of the home team winning:
+Generate features
+Perform train/test split
+Train model using the training dataset
+Obtain accuracy/score
+Optimize Hyperparameters
+Determine most important features and test model using just those features
+For betting odds and team attributes, we were able to prevent overfitting of the data by fine tuning the hyperparameters such as a depth limit and a limit to n_estimators in an attempt to increase the accuracy of the trees. 
 
 ## Results and Discussion
 
@@ -214,12 +224,41 @@ Given the relatively low performance and comparable results between the test and
 
 ### Random Forest Results
 
+# Betting Odds Features
+On initial training with all 30 features (home win, away win, draw odds from 10 providers), we found that the raw accuracy of the Random Forest Classifier was roughly 63%, however it varied anywhere from 60% to 65%. We then used RandomizedSearchCV from sklearn in order to identify the optimal max depth and number of trees in each forest. This not only allowed for greater testing accuracy by increasing the number of trees from the default of 100 to roughly 400, but also decreased the overfitting which was being caused by there being no maximum depth. This led the training accuracy to drop from 100 to around 75, but the test accuracy jumped up to being consistently in the mid 60s (65-67). From these results we created a basic confusion matrix to break down the Random Forests ability to classify True Positives and True Negatives. In the matrix below, the accuracy was .670, the precision was 0.6758, and the recall was .50.
+![](confusion_matrix.png)
+
+We then found the most important features for the RandomForestClassifier using the feature_importances_ attribute of the RandomForestClassifier. 
+![](chart_of_most_important.png)
+
+Based on this chart, we decided to test two more times using the top 4 and the top 10 most important features as there seemed to be notable dropoffs in importance after VCH and IWH. When we reran the RandomForestClassifier using just the 4 most important features, we found that the performance remained about the same or marginally worse averaging 65-66% accuracy, however, when running in on the 10 most important features, we found that it actually made the model slightly more successful, hitting 67-68% accuracy consistently.
+
+# Team Attributes Features 
+Initially, when using all team attribute features such as build up, chance creation stats, and defense stats, we found that the accuracy was around 57%, ranging from 55% to 60%. However, after fine tuning the parameters such as depth limit and n estimators (the number of trees used), the accuracy increased to be around 59%. As we did in betting odds features, we also used RandomizedSearchCV to determine these features. Through RandomizedSearchCV, we were able to increase the number of trees used to be around 334 and limit the depth to 10, allowing the random forest to result in more accurate predictions. 
+
+After running the model on all the team attribute features, we tried running the model on specific team attributes individually. After running the random forest model on just the build up stats, we had an accuracy of around 55%, but it ranged from 55% to 60%. When we ran the model on just the chance creation stats, we had an accuracy of around 56%, but it ranged from 55% to 60%. And when we ran the model on just the defense stats, we had an accuracy of around 52%, but it ranged from 50% to 55%. We then attempted to optimize our results more through hyper parameter fine tuning on the build up features and the best k features combined and by running the model on just the most important k features for each category. As with finding the most features with the betting odds, using the feature_importances_attribute of the RandomForestClassifier. When we optimized the model to train the random forest by running on the top three features of each category (defense, build up, and chance creation), we had an accuracy of around 62%, but it ranged from 55% to 62%. After hyperparameter fine tuning, we achieved an average accuracy of 60%
+
+Here are the “most important” features chosen that were used for the last optimized random forest model: 
+![](most_important.png)
+
+
+| Attributes | Metric Used | Before HyperParameter Tuning | After HyperParameter Tuning |
+|--|--|--|--|
+| Betting Odds | Accuracy Score | 63% | 66% |
+| Team Attributes | Accuracy Score | 57% | 59% |
+| Buildup | Accuracy Score | 50.7% | 56% |
+
+
+
+
 
 ### Conclusions
 To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 70% accurate logistic regression trained on 25 betting odds features
 * 61% accurate logistic regression trained on 6 FIFA team chance creation features
 * 61% accurate logistic regression trained on 4 player attribute feautres
+* 67% accurate random forest classifier trained on 10 betting odds features with optimized hyperparameters
+* 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
 
 
 ## Next Steps
@@ -239,8 +278,8 @@ See link above
 | Name | Contribution to Midterm |
 | -- | -- |
 | Daniel | Logistic Regression (betting odds and team based features)|
-| Elijah | Random Forest|
-| Sabina | Random Forest|
+| Elijah | Random Forest (betting odds)|
+| Sabina | Random Forest (team attributes) |
 | Xander | Logistic Regression (player based features) |
 | Matthew | Random Forest, Database Feature Extraction |
 
