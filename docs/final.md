@@ -262,15 +262,6 @@ To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
 
 
-## Next Steps
-* Replace manual feature extraction with a database class abstraction to handle pulling data from multiple tables in one feature table
-* Train another linear regression model on matchday team attributes (e.g. starting formation shape)
-* Train another linear regression model on a team's historical performance (e.g. win/loss record, historical number of yellow/red cards, etc.)
-* Build an artificial neural network with many hyperparameters to predict match outcome
-* Construct betting odds from model results
-
-
-
 ## [Timeline](https://gtvault-my.sharepoint.com/:x:/g/personal/sajjan3_gatech_edu/EZLBLWmNKIlOhDSoWb220_8B6iRV6UzX8bXvDjJ6bf01vA?e=dXrga7)
 See link above
 
