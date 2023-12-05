@@ -225,11 +225,15 @@ PCA's principal function lies in dimensionality reduction, assuming the features
 
 Among the regression techniques, we favored LASSO (L1 regularizer) over Ridge (L2 regularizer). LASSO's propensity to potentially reduce certain features to an importance of 0, effectively removing them, aligns with our aim in identifying interrelated features. Moreover, the robustness of L1 regularization against outliers, a prevalent issue, especially within sports analytics, solidifies LASSO as the optimal choice amidst these considerations.
 
+![](LASSO.png)
+
 After applying LASSO regularization, the following is the performance of our logistic regression model.
 
 |           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential | All Features |
 |-----------|---------|---------|----------|-----------| -----------|
 | Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |0.6799      |
+
+![](ROC.png)
 
 After feature reduction, the logistic regression based solely on betting odds outperformed even the model utilizing all available features. This outcome prompts an important inquiry: why does our model display inferior performance as more features are incorporated, particularly given our use of L1 regularization across all features?
 
