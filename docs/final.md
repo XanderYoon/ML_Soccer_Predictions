@@ -222,7 +222,6 @@ After applying LASSO regularization, the following is the performance of our log
 |-----------|---------|---------|----------|-----------| -----------|
 | Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |0.6799      |
 
-![](ROC.png)
 
 After feature reduction, the logistic regression based solely on betting odds outperformed even the model utilizing all available features. This outcome prompts an important inquiry: why does our model display inferior performance as more features are incorporated, particularly given our use of L1 regularization across all features?
 
