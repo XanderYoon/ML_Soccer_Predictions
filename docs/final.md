@@ -85,14 +85,12 @@ For betting odds and team attributes, we were able to prevent overfitting of the
 Lastly, we trained the neural network model on similar features: betting odds, team attributes, and player attributes. We used Scikit_Learn's MLPClassifier instane to be able to predict the outcome of matches based on these different features.
 We used the same process to be able to obtain a score regarding the accuracy of the neural network. 
 
-Generate features
-Perform train/test split
-Train model using the training dataset
-Obtain accuracy/score
-Optimize Hyperparameters
-Determine most important features and test model using just those features
-
-
+1. Generate features
+2. Perform train/test split
+3. Train model using the training dataset
+4. Obtain accuracy/score
+5. Optimize Hyperparameters
+6. Determine most important features and test model using just those features
 
 ## Results and Discussion
 
