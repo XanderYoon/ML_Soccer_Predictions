@@ -205,11 +205,6 @@ Subsequent to these findings, we pondered the notion that the disparity in featu
 
 The outcomes for the differences in features are outlined below:
 
-|           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential |
-|-----------|---------|---------|----------|-----------|
-| Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |
-
-
 Surprisingly, the performance for height, weight, Δ height, and Δ weight were all identical—situated just under the 60% mark, which aligns with our 60% goal but leaves room for improvement. On the other hand, Δ Potential exhibited a performance increase, albeit marginal and practically negligible.
 
 Looking ahead, our strategies to enhance performance include:
@@ -222,6 +217,25 @@ Given the substantial range and differences in values between height/weight and 
 
 Addressing Underfitting:
 Given the relatively low performance and comparable results between the test and training sets, treating the model as potentially underfitting is warranted. To address this, we plan to integrate team performance with player performance, thereby augmenting the feature count and potentially alleviating underfitting issues.
+
+#### All Features Logistic Regression ####
+When first attempting to run a logistic regression model on all features (with no regularization) we ran into an issue where our model failed to converge as such we sought out to feature select and regularize our data. In our pursuit of addressing convergence issues, our initial focus centers on implementing feature selection/importance. Our hypothesis revolves around the notion that our model grapples with overfitting, driven by our intuition that multicollinearity, such as the relationship between height and weight, exists within the data. To remedy this, we meticulously considered various feature importance/selection methods, namely PCA, Ridge Regression, and LASSO. After careful deliberation, we opted for Lasso, and here's the rationale behind our decision-making process for each method.
+
+PCA's principal function lies in dimensionality reduction, assuming the features exhibit a normal distribution of statistical independence. However, given our suspicion of significant collinearity among features, particularly evident with our dataset, we steered away from PCA. This led us to regression models, designed to curtail variance within the dataset while assigning weights to features.
+
+Among the regression techniques, we favored LASSO (L1 regularizer) over Ridge (L2 regularizer). LASSO's propensity to potentially reduce certain features to an importance of 0, effectively removing them, aligns with our aim in identifying interrelated features. Moreover, the robustness of L1 regularization against outliers, a prevalent issue, especially within sports analytics, solidifies LASSO as the optimal choice amidst these considerations.
+
+After applying LASSO regularization, the following is the performance of our logistic regression model.
+
+|           | $\Delta$ Height  | $\Delta$ Weight  | $\Delta$ Rating   | $\Delta$ Potential | All Features |
+|-----------|---------|---------|----------|-----------| -----------|
+| Estimator | 0.59887 | 0.59887 | 0.610169 | 0.638418  |0.6799      |
+
+After feature reduction, the logistic regression based solely on betting odds outperformed even the model utilizing all available features. This outcome prompts an important inquiry: why does our model display inferior performance as more features are incorporated, particularly given our use of L1 regularization across all features?
+
+Two potential explanations have emerged. Firstly, the issue of overfitting due to inherent multicollinearity cannot be discounted. It's plausible that the metrics employed by betting companies mirror those in our model, inadvertently introducing duplicative data and features, leading to overfitting. This unexpected redundancy might undermine the model's predictive capacity.
+
+Alternatively, the complexity and unpredictable nature of sports itself might be the culprit. Numerous immeasurable factors, such as athlete mindset, remain beyond our quantifiable scope. Betting odds, drawing from a wider range of sources and possibly encapsulating such intangible elements, might inherently possess an edge in accounting for these unquantifiable variables, enabling them to better forecast outcomes.
 
 ### Random Forest Results
 
