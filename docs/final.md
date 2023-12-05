@@ -257,7 +257,10 @@ Here is a summary of our findings in this section:
 | Buildup | Accuracy Score | 50.7% | 56% |
 
 ### Neural Network Results
-**WIP**
+On initial training of the neural network with all 30 betting odd providers, an accuracy of around 66% was achieved. Upon optimizing the hyperparameters of the neural network using GraphSearchCV to find the most optimal combination of size for the hidden layers, activation function out of ‘tanh’ and ‘relu’, solver for training the network, regularization term, and learning rated, the accuracy remained around the same at around 66%. However, after finding the top three most important betting odd providers, our average accuracy increased to around 68%. After training the neural network with the betting odd providers, it was trained using the team attributes. When the model was trained just on the data from the team attributes, its test set score was around 52%. It makes sense that the team attributes would not be good data to use to train the model because many of the team attributes had negative importances when the permutation importance of the different team attributes were graphed for the neural network. The team attributes data was merely providing busy noise to the model. There was also extreme overfitting (with the training set score being 70%) due to there being no limit to the hidden layer sizes. However, after adjusting the hyperparameters of the neural network, the score increased to around 60%. 
+
+Lastly, the model was trained using data about the player attributes. By averaging the weight, height, overall rating, and potential for each team, we were able to train the model using different sets of player attributes. Height and weight turned out to not be sets of data for training the model, as they achieved scores around 53%. When training the model merely with all the ratings and potentials, the scores were also around 55%. However, we decided to train the model using data on the differences in potential and rating between different teams playing against each other, and the model achieved a score of 65% when trained on this data. After hyperparameter fine tuning, the score remained around 65% for potential and rating. Based on these results, we can conclude that the difference in rating or potential in players of teams is a good indicator for predicting the results of a game. 
+
 
 ### Conclusions
 To conclude, we see the following sufficiently accurate (>60% accuracy) models:
@@ -266,6 +269,9 @@ To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 61% accurate logistic regression trained on 4 player attribute feautres
 * 67% accurate random forest classifier trained on 10 betting odds features with optimized hyperparameters
 * 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
+* 68% accurate neural network trained on top three betting odd providers
+* 65% accurate neural network when trained on overall rating difference with optimized hyperparameters
+* 65% accurate neural network when trained on overall potential difference with optimized hyperparameters
 
 ### Model Comparison
 On betting odds data, the logistic regression model outperformed all others, with a 70% accuracy. On all other features, a decision tree model reached a 69% accuracy, while a neural network model reached 67% accuracy, without much fine tuning. 
