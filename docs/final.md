@@ -261,6 +261,11 @@ To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 67% accurate random forest classifier trained on 10 betting odds features with optimized hyperparameters
 * 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
 
+### Model Comparison
+On betting odds data, the logistic regression model outperformed all others, with a 70% accuracy. On all other features, a decision tree model reached a 69% accuracy, while a neural network model reached 67% accuracy, without much fine tuning. 
+
+To compare the models themselves, although the logistic regression model performs relatively well overall, it is more sensitive to outliers. Random forests and neural networks, although more computationally intensive, capture better match predictions. Feature extraction and exploration was an important part of this project, and this is an area where the neural network model excels. 
+
 ## Next Steps
 A potential next step for future researchers is investigating how to use the models we built to develop specific spreads and betting odds on matches using the player and team attribute models, and to evaluate their performance against the database betting odds. One way to achieve this would be to perform multi-class classification using cross entropy as the loss function. Then, using the logit, extract probabilities of win/loss/tie, and use the magnitude of each to compute specific spreads using a heuristic, evaluated by trial/error or other metrics. 
 
