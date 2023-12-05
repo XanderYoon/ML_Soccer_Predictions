@@ -207,17 +207,6 @@ The outcomes for the differences in features are outlined below:
 
 Surprisingly, the performance for height, weight, Δ height, and Δ weight were all identical—situated just under the 60% mark, which aligns with our 60% goal but leaves room for improvement. On the other hand, Δ Potential exhibited a performance increase, albeit marginal and practically negligible.
 
-Looking ahead, our strategies to enhance performance include:
-
-Addressing Multicollinearity:
-Our initial step toward performance improvement involves mitigating multicollinearity. Given the identical performance of height and weight, we propose removing one or both of these features, considering their lackluster absolute performance. Additionally, we plan to implement a multivariate logistic regression and compare its results with those of a Lasso model, both known for their suitability in low-dimensional datasets. The plan is to systematically remove either height or weight based on a criterion such as the higher root mean square error (RMSE) and assess the impact on logistic regression outcomes.
-
-Regularization of Data:
-Given the substantial range and differences in values between height/weight and potential/ratings, regularization becomes imperative. We intend to apply Sci-Kit Learn's MinMaxScaler() function to standardize the data.
-
-Addressing Underfitting:
-Given the relatively low performance and comparable results between the test and training sets, treating the model as potentially underfitting is warranted. To address this, we plan to integrate team performance with player performance, thereby augmenting the feature count and potentially alleviating underfitting issues.
-
 #### All Features Logistic Regression ####
 When first attempting to run a logistic regression model on all features (with no regularization) we ran into an issue where our model failed to converge as such we sought out to feature select and regularize our data. In our pursuit of addressing convergence issues, our initial focus centers on implementing feature selection/importance. Our hypothesis revolves around the notion that our model grapples with overfitting, driven by our intuition that multicollinearity, such as the relationship between height and weight, exists within the data. To remedy this, we meticulously considered various feature importance/selection methods, namely PCA, Ridge Regression, and LASSO. After careful deliberation, we opted for Lasso, and here's the rationale behind our decision-making process for each method.
 
