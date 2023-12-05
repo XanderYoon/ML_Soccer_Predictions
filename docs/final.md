@@ -261,6 +261,8 @@ To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 67% accurate random forest classifier trained on 10 betting odds features with optimized hyperparameters
 * 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
 
+## Next Steps
+A potential next step for future researchers is investigating how to use the models we built to develop specific spreads and betting odds on matches using the player and team attribute models, and to evaluate their performance against the database betting odds. One way to achieve this would be to perform multi-class classification using cross entropy as the loss function. Then, using the logit, extract probabilities of win/loss/tie, and use the magnitude of each to compute specific spreads using a heuristic, evaluated by trial/error or other metrics. 
 
 ## [Timeline](https://gtvault-my.sharepoint.com/:x:/g/personal/sajjan3_gatech_edu/EZLBLWmNKIlOhDSoWb220_8B6iRV6UzX8bXvDjJ6bf01vA?e=dXrga7)
 See link above
@@ -269,10 +271,10 @@ See link above
 
 | Name | Contribution to Midterm |
 | -- | -- |
-| Daniel | Logistic Regression (betting odds and team based features)|
+| Daniel | Logistic Regression (historical features)|
 | Elijah | Random Forest (betting odds)|
-| Sabina | Random Forest (team attributes) |
-| Xander | Logistic Regression (player based features) |
+| Sabina | Random Forest (team attributes), neural network |
+| Xander | Logistic Regression (regularization) |
 | Matthew | Random Forest, Database Feature Extraction |
 
 ## References
