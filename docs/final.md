@@ -82,7 +82,17 @@ Determine most important features and test model using just those features
 For betting odds and team attributes, we were able to prevent overfitting of the data by fine tuning the hyperparameters such as a depth limit and a limit to n_estimators in an attempt to increase the accuracy of the trees. 
 
 ### Neural Network Methods
-**WIP**
+Lastly, we trained the neural network model on similar features: betting odds, team attributes, and player attributes. We used Scikit_Learn's MLPClassifier instane to be able to predict the outcome of matches based on these different features.
+We used the same process to be able to obtain a score regarding the accuracy of the neural network. 
+
+Generate features
+Perform train/test split
+Train model using the training dataset
+Obtain accuracy/score
+Optimize Hyperparameters
+Determine most important features and test model using just those features
+
+
 
 ## Results and Discussion
 
@@ -258,6 +268,8 @@ Here is a summary of our findings in this section:
 
 ### Neural Network Results
 On initial training of the neural network with all 30 betting odd providers, an accuracy of around 66% was achieved. Upon optimizing the hyperparameters of the neural network using GraphSearchCV to find the most optimal combination of size for the hidden layers, activation function out of ‘tanh’ and ‘relu’, solver for training the network, regularization term, and learning rated, the accuracy remained around the same at around 66%. However, after finding the top three most important betting odd providers, our average accuracy increased to around 68%. After training the neural network with the betting odd providers, it was trained using the team attributes. When the model was trained just on the data from the team attributes, its test set score was around 52%. It makes sense that the team attributes would not be good data to use to train the model because many of the team attributes had negative importances when the permutation importance of the different team attributes were graphed for the neural network. The team attributes data was merely providing busy noise to the model. There was also extreme overfitting (with the training set score being 70%) due to there being no limit to the hidden layer sizes. However, after adjusting the hyperparameters of the neural network, the score increased to around 60%. 
+
+![](importances.png)
 
 Lastly, the model was trained using data about the player attributes. By averaging the weight, height, overall rating, and potential for each team, we were able to train the model using different sets of player attributes. Height and weight turned out to not be sets of data for training the model, as they achieved scores around 53%. When training the model merely with all the ratings and potentials, the scores were also around 55%. However, we decided to train the model using data on the differences in potential and rating between different teams playing against each other, and the model achieved a score of 65% when trained on this data. After hyperparameter fine tuning, the score remained around 65% for potential and rating. Based on these results, we can conclude that the difference in rating or potential in players of teams is a good indicator for predicting the results of a game. 
 
