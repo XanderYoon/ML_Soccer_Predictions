@@ -262,7 +262,7 @@ Here are the “most important” features chosen that were used for the last op
 After finishing our feature extractor for the dataset, we returned to our random forest model to see if a combination of previous match results, team attributes, and player attributes could outperform the odds based predictor. After running and tuning our model, we were able to achieve an accuracy of 68%, outperforming any previous random forest model and demonstrating that from previous match data and Fifa attributes alone, we could better perdict the outcome of matches than from betting odds alone.
 
 Below are the feature importance for this new combined feature mode:
-![](feature_importance_comb_rf.png)
+![](feature_imp_comb_rf.png)
 
 Here is a summary of our findings in this section:
 
@@ -277,7 +277,6 @@ Here is a summary of our findings in this section:
 On initial training of the neural network with all 30 betting odd providers, an accuracy of around 66% was achieved. Upon optimizing the hyperparameters of the neural network using GraphSearchCV to find the most optimal combination of size for the hidden layers, activation function out of ‘tanh’ and ‘relu’, solver for training the network, regularization term, and learning rated, the accuracy remained around the same at around 66%. However, after finding the top three most important betting odd providers, our average accuracy increased to around 68%. After training the neural network with the betting odd providers, it was trained using the team attributes. When the model was trained just on the data from the team attributes, its test set score was around 52%. It makes sense that the team attributes would not be good data to use to train the model because many of the team attributes had negative importances when the permutation importance of the different team attributes were graphed for the neural network. The team attributes data was merely providing busy noise to the model. There was also extreme overfitting (with the training set score being 70%) due to there being no limit to the hidden layer sizes. However, after adjusting the hyperparameters of the neural network, the score increased to around 60%. 
 
 Similar to with the Random Forest models, when combining team results, team attributes, and player attributes together, the Neural Network model was able to achieve a higher accuracy than with better odds alone or any individual part of the dataset (68% accuracy). We used model hyperparameter tuning to find a model that did not overfit to training data and to find good training hyperparameters like learning rate that allowed for smooth, continuous, and fast training.
-
 
 | Attributes | Metric Used | Before HyperParameter Tuning | After HyperParameter Tuning |
 |--|--|--|--|
@@ -306,6 +305,17 @@ After Hyperparamater fine tuning:
 |-----------|---------|---------|
 | Estimator | 0.6515 | 0.6431  |
 
+Lastly, we again retrained our Neural Network model with the combined features using our feature extractor. We ultilized cross-validation to tune various model hyperparameters like hidden layer sizes and activation functions and training hyperparameters such as learning rate and number of epochs. After hyperparameter tuning, we were able to create a Neural Network model that achieved a 68% accuracy using the combined features of previous match results, team attributes, and player attributes. This outperformed any of the previous Neural Network based models and achieved a similar accuracy to our combined features Random Forest Model.
+
+The training curves for this model are below:
+![](training_loss_comb_nn.png)
+![](training_acc_comb_nn.png)
+
+
+|           | Training Loss  | Test Loss | Test Accuracy
+|-----------|---------|---------|------|
+| Estimator | 0.5850 | 0.5890  | 0.6757 |
+
 
 
 ### Conclusions
@@ -315,12 +325,14 @@ To conclude, we see the following sufficiently accurate (>60% accuracy) models:
 * 61% accurate logistic regression trained on 4 player attribute feautres
 * 67% accurate random forest classifier trained on 10 betting odds features with optimized hyperparameters
 * 60% accurate random forest classifier trained on best 9 team attributes with optimized hyperparameters
+* 68% accurate random forest classifier trained on combined previous match results, team-attributes, and player attributes with optimized hyperparameters
 * 68% accurate neural network trained on top three betting odd providers
 * 65% accurate neural network when trained on overall rating difference with optimized hyperparameters
 * 65% accurate neural network when trained on overall potential difference with optimized hyperparameters
+* 68% accuracy neural network trained on combined previous match results, team-attributes, and player attributes with optimized hyperparameters
 
 ### Model Comparison
-On betting odds data, the logistic regression model outperformed all others, with a 70% accuracy. On all other features, a decision tree model reached a 69% accuracy, while a neural network model reached 67% accuracy, without much fine tuning. 
+On betting odds data, the logistic regression model outperformed all others, with a 70% accuracy. On all other features, a decision tree model reached a 69% accuracy, while a neural network model reached 68% accuracy.
 
 To compare the models themselves, although the logistic regression model performs relatively well overall, it is more sensitive to outliers. Random forests and neural networks, although more computationally intensive, capture better match predictions. Feature extraction and exploration was an important part of this project, and this is an area where the neural network model excels. Unfortunately, a neural net is prone to overfitting. 
 
@@ -340,7 +352,7 @@ See link above
 | Elijah | Random Forest (betting odds)|
 | Sabina | Random Forest (team attributes), neural network |
 | Xander | Logistic Regression (regularization) |
-| Matthew | Random Forest, Database Feature Extraction |
+| Matthew | Random Forest, Database Feature Extraction, neural network |
 
 ## References
 Horvat, T., & Job, J. (2020). The use of machine learning in sport outcome prediction: A review. WIREs Data Mining and Knowledge Discovery, 10(5). https://doi.org/10.1002/widm.1380
