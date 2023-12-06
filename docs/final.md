@@ -352,7 +352,7 @@ See link above
 | Elijah | Random Forest (betting odds)|
 | Sabina | Random Forest (team attributes), neural network |
 | Xander | Logistic Regression (regularization) |
-| Matthew | Random Forest, Database Feature Extraction, neural network |
+| Matthew | Random Forest (combined features), Database Feature Extraction, neural network (combined features) |
 
 ## References
 Horvat, T., & Job, J. (2020). The use of machine learning in sport outcome prediction: A review. WIREs Data Mining and Knowledge Discovery, 10(5). https://doi.org/10.1002/widm.1380
