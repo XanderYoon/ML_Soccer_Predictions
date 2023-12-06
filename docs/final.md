@@ -36,12 +36,15 @@ __Disclaimer__: Online sports betting is illegal in the state of Georgia, and be
 
 ## Data Collection
 
-We created three sets of features to train our various classifier models with:
+We created four sets of features to train our various classifier models with:
 1. Betting odds
 2. Team-based attributes
 3. Player-based attributes
+4. Combined previous match results, team-based attributes, and player-based attributes.
 
 To create these features, we had to generate features to encode match-ups between two teams. The Match data table contains betting odds from 10 providers, which already encode a match up by providing the odds of home team win, away team win, or draw For the remaining features, we computed match-up metrics using team-based and player-based ratings from the FIFA video game series. For example, for team attributes from the FIFA video game series sourced from the Team_attributes table, we computed the difference in home team metric with away team metric, and performed various aggregations (min, max, mean, median) on the features before associating them with their matches in the Match table. An example of one attribute we computed is average overall player FIFA rating per team. We then take the difference in average overall player FIFA rating from the home team and away team, and use that as the training feature.
+
+To try to achieve stronger results, we wanted to combine these seperate sets of features along with new features like previous match results to create a more diverse and robust dataset. This was challenging due to the nature our dataset and the multiple tables that contained the relevant data. To sovle this problem, we created a class called Soccer_Database to abstract out the tedious feature extraction and allow us to simply select the desired features and get a 2D numpy array.
 
 The binary classification problem used “home team wins” as the positive label (1), and “home team draw/lose” as the negative label (0). Our dataset contained home team goals and away team goals, so we created our label accordingly – 1 if home team goals - away team goals > 0, 0 otherwise.
 
@@ -256,6 +259,11 @@ After running the model on all the team attribute features, we tried running the
 Here are the “most important” features chosen that were used for the last optimized random forest model: 
 ![](most_important.png)
 
+After finishing our feature extractor for the dataset, we returned to our random forest model to see if a combination of previous match results, team attributes, and player attributes could outperform the odds based predictor. After running and tuning our model, we were able to achieve an accuracy of 68%, outperforming any previous random forest model and demonstrating that from previous match data and Fifa attributes alone, we could better perdict the outcome of matches than from betting odds alone.
+
+Below are the feature importance for this new combined feature mode:
+![](feature_importance_comb_rf.png)
+
 Here is a summary of our findings in this section:
 
 | Attributes | Metric Used | Before HyperParameter Tuning | After HyperParameter Tuning |
@@ -263,6 +271,7 @@ Here is a summary of our findings in this section:
 | Betting Odds | Accuracy Score | 63% | 66% |
 | Team Attributes | Accuracy Score | 57% | 59% |
 | Buildup | Accuracy Score | 50.7% | 56% |
+| Combined | Accuracy Score | N/A | 68% |
 
 ### Neural Network Results
 On initial training of the neural network with all 30 betting odd providers, an accuracy of around 66% was achieved. Upon optimizing the hyperparameters of the neural network using GraphSearchCV to find the most optimal combination of size for the hidden layers, activation function out of ‘tanh’ and ‘relu’, solver for training the network, regularization term, and learning rated, the accuracy remained around the same at around 66%. However, after finding the top three most important betting odd providers, our average accuracy increased to around 68%. After training the neural network with the betting odd providers, it was trained using the team attributes. When the model was trained just on the data from the team attributes, its test set score was around 52%. It makes sense that the team attributes would not be good data to use to train the model because many of the team attributes had negative importances when the permutation importance of the different team attributes were graphed for the neural network. The team attributes data was merely providing busy noise to the model. There was also extreme overfitting (with the training set score being 70%) due to there being no limit to the hidden layer sizes. However, after adjusting the hyperparameters of the neural network, the score increased to around 60%. 
