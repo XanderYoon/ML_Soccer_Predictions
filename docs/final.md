@@ -271,6 +271,22 @@ On initial training of the neural network with all 30 betting odd providers, an 
 
 Lastly, the model was trained using data about the player attributes. By averaging the weight, height, overall rating, and potential for each team, we were able to train the model using different sets of player attributes. Height and weight turned out to not be sets of data for training the model, as they achieved scores around 53%. When training the model merely with all the ratings and potentials, the scores were also around 55%. However, we decided to train the model using data on the differences in potential and rating between different teams playing against each other, and the model achieved a score of 65% when trained on this data. After hyperparameter fine tuning, the score remained around 65% for potential and rating. Based on these results, we can conclude that the difference in rating or potential in players of teams is a good indicator for predicting the results of a game. 
 
+|           | Height  | Weight | Rating  | Potential |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.5319 | 0.5319 | 0.5543 | 0.5864  |
+
+Before Hyperparamater fine tuning:
+|           | Height_differences  | Weight_differenes  | Rating_differences   | Potential_differences |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.5319 | 0.5319 | 0.6463 | 0.6344  |
+
+
+After Hyperparamater fine tuning:
+|            | Rating_differences  | Potential_differences |
+|-----------|---------|---------|----------|-----------|
+| Estimator | 0.6515 | 0.6431  |
+
+
 
 ### Conclusions
 To conclude, we see the following sufficiently accurate (>60% accuracy) models:
