@@ -196,7 +196,7 @@ class PlayerDataManager:
             self.player_attributes = self.player_attributes.sort_values(by="date")
         self.player_id = player_data["player_api_id"]
     
-    def get_player_attributes(self, date) -> Dict[str, float]:
+    def get_player_attributes(self, date, target_feature=None) -> Dict[str, float]:
         '''
         Loads player data from database
         '''
@@ -218,6 +218,8 @@ class PlayerDataManager:
 
         attributes = {}
         for column in columns_names:
+            if target_feature is not None and column != target_feature:
+                continue
             attributes[column] = player_attributes[column]
         attributes["height"] = self.player_data["height"]
         attributes["weight"] = self.player_data["weight"]
@@ -242,7 +244,7 @@ class TeamManager:
     def add_matches(self, matches: pandas.DataFrame) -> None:
         self.matches = matches
 
-    def get_team_attributes(self, date) -> Dict[str, float]:
+    def get_team_attributes(self, date, target_features=None) -> Dict[str, float]:
         '''
         Loads team data from database
         '''
@@ -262,6 +264,8 @@ class TeamManager:
 
         attributes = {}
         for column in columns_names:
+            if target_features is not None and column not in target_features:
+                continue
             attributes[column] = team_attributes[column]
         return attributes
 
@@ -294,7 +298,7 @@ class MatchDataManager:
         # return matches
         return n_prev_matches
 
-    def load_match_data(self) -> None:
+    def load_match_data(self, target_team_features=None, target_features_avg=None, target_features_ind=None) -> None:
         '''
         Loads match data from database
         '''
@@ -338,11 +342,14 @@ class MatchDataManager:
                     home_team_oppentent_rating.pop(i)
                 else:
                     i += 1
-            home_team_oppentent_rating = sum(home_team_oppentent_rating) / len(home_team_oppentent_rating)
+            if len(home_team_oppentent_rating) == 0:
+                home_team_oppentent_rating = np.nan
+            else:
+                home_team_oppentent_rating = sum(home_team_oppentent_rating) / len(home_team_oppentent_rating)
         
         away_team_record = 0
         away_team_goal_diff = 0
-        away_team_oppentent_rating = 0
+        away_team_oppentent_rating = np.nan
         if len(away_team_prev_matches) == 0:
             away_team_record = 0
             away_team_goal_diff = 0
@@ -359,11 +366,14 @@ class MatchDataManager:
                     away_team_oppentent_rating.pop(i)
                 else:
                     i += 1
-            away_team_oppentent_rating = sum(away_team_oppentent_rating) / len(away_team_oppentent_rating)
+            if len(away_team_oppentent_rating) == 0:
+                away_team_oppentent_rating = np.nan
+            else:
+                away_team_oppentent_rating = sum(away_team_oppentent_rating) / len(away_team_oppentent_rating)
         
         # get team attributes
-        home_team_attributes = home_team_data.get_team_attributes(date)
-        away_team_attributes = away_team_data.get_team_attributes(date)
+        home_team_attributes = home_team_data.get_team_attributes(date, target_team_features)
+        away_team_attributes = away_team_data.get_team_attributes(date, target_team_features)
 
         self.match_features["home_team_record"] = home_team_record
         self.match_features["away_team_record"] = away_team_record
@@ -372,15 +382,22 @@ class MatchDataManager:
         self.match_features["home_team_oppenent_rating"] = home_team_oppentent_rating
         self.match_features["away_team_oppenent_rating"] = away_team_oppentent_rating
 
+        betting_features = ["B365H", "B365D", "B365A", "BWH", "BWD", "BWA", "IWH", "IWD", "IWA", "LBH", "LBD", "LBA", "WHH", "WHD", "WHA", "VCH", "VCD", "VCA", "PSH", "PSD", "PSA", "PSCH", "PSCD", "PSCA"]
+
+        for column in self.match_data.columns:
+            if column not in betting_features:
+                continue
+            self.match_features[column] = self.match_data[column].values[0]
+
         for column in home_team_attributes:
             self.team_attribute_features[f"home_team_{column}"] = home_team_attributes[column]
         for column in away_team_attributes:
             self.team_attribute_features[f"away_team_{column}"] = away_team_attributes[column]
 
         # get average player attributes
-        player_avg_attributes = MatchDataManager.get_avg_player_attribute_for_team(self.sdb, self.match_data)
+        player_avg_attributes = MatchDataManager.get_avg_player_attribute_for_team(self.sdb, self.match_data, target_features_avg)
         # get player attributes
-        player_individual_attributes = MatchDataManager.get_player_attributes_for_teams(self.sdb, self.match_data)
+        player_individual_attributes = MatchDataManager.get_player_attributes_for_teams(self.sdb, self.match_data, target_features_ind)
 
         for column in player_avg_attributes:
             self.player_avg_attribute_features[column] = player_avg_attributes[column] 
@@ -393,57 +410,72 @@ class MatchDataManager:
             team_attribute_features: List[str],
             player_avg_attribute_features: List[str],
             player_individual_attribute_features: List[str]
-    ) -> np.ndarray:
+    ) -> pandas.DataFrame:
         '''
         Returns a numpy array of features for the given match data
         '''
         features = []
-        print(self.match_features)
+        columns = []
         for feature in match_features:
             if f"home_team_{feature}" not in self.match_features:
                 features.append(np.nan)
+                columns.append(f"home_team_{feature}")
             else:
                 features.append(self.match_features[f"home_team_{feature}"])
+                columns.append(f"home_team_{feature}")
             if f"away_team_{feature}" not in self.match_features:
                 features.append(np.nan)
+                columns.append(f"away_team_{feature}")
             else:
                 features.append(self.match_features[f"away_team_{feature}"])
-        print(self.team_attribute_features)
+                columns.append(f"away_team_{feature}")
         for feature in team_attribute_features:
             if f"home_team_{feature}" not in self.team_attribute_features:
                 features.append(np.nan)
+                columns.append(f"home_team_{feature}")
             else:
                 features.append(self.team_attribute_features[f"home_team_{feature}"])
+                columns.append(f"home_team_{feature}")
             if f"away_team_{feature}" not in self.team_attribute_features:
                 features.append(np.nan)
+                columns.append(f"away_team_{feature}")
             else:
                 features.append(self.team_attribute_features[f"away_team_{feature}"])
-        print(self.player_avg_attribute_features)
+                columns.append(f"away_team_{feature}")
         for feature in player_avg_attribute_features:
             if f"home_team_avg_{feature}" not in self.player_avg_attribute_features:
                 features.append(np.nan)
+                columns.append(f"home_team_avg_{feature}")
             else:
                 features.append(self.player_avg_attribute_features[f"home_team_avg_{feature}"])
+                columns.append(f"home_team_avg_{feature}")
             if f"away_team_avg_{feature}" not in self.player_avg_attribute_features:
                 features.append(np.nan)
+                columns.append(f"away_team_avg_{feature}")
             else:
                 features.append(self.player_avg_attribute_features[f"away_team_avg_{feature}"])
+                columns.append(f"away_team_avg_{feature}")
         for feature in player_individual_attribute_features:
             if f"home_team_{feature}" not in self.player_individual_attribute_features:
                 for i in range(11):
                     features.append(np.nan)
+                    columns.append(f"home_team_player_{i+1}_{feature}")
             else:
                 home_team_features = self.player_individual_attribute_features[f"home_team_{feature}"]
                 for i in range(len(home_team_features)):
                     features.append(home_team_features[i])
+                    columns.append(f"home_team_player_{i+1}_{feature}")
             if f"away_team_{feature}" not in self.player_individual_attribute_features:
                 for i in range(11):
                     features.append(np.nan)
+                    columns.append(f"away_team_player_{i+1}_{feature}")
             else:
                 away_team_features = self.player_individual_attribute_features[f"away_team_{feature}"]
                 for i in range(len(away_team_features)):
                     features.append(away_team_features[i])
-        return np.array(features)
+                    columns.append(f"away_team_player_{i+1}_{feature}")
+        features = np.array(features)
+        return (features, columns)
         
     def capture_team_data(self, team_id: int, date: str) -> TeamManager:
         '''
@@ -457,10 +489,23 @@ class MatchDataManager:
         home_team_id = match_data["home_team_api_id"]
         away_team_id = match_data["away_team_api_id"]
 
+        if type(home_team_id) == pandas.Series:
+            home_team_id = home_team_id.iloc[0]
+        if type(away_team_id) == pandas.Series:
+            away_team_id = away_team_id.iloc[0]
+        
+        if type(team_id) == pandas.Series:
+            team_id = team_id.iloc[0]
+
         assert team_id == home_team_id or team_id == away_team_id, "team_id must be either home or away team"
         
         home_goals = match_data["home_team_goal"]
         away_goals = match_data["away_team_goal"]
+
+        if type(home_goals) == pandas.Series:
+            home_goals = home_goals.iloc[0]
+        if type(away_goals) == pandas.Series:
+            away_goals = away_goals.iloc[0]
 
         if team_id == home_team_id:
             if home_goals > away_goals:
@@ -481,6 +526,14 @@ class MatchDataManager:
     def get_goal_diff_for_team(match_data, team_id: int):
         home_team_id = match_data["home_team_api_id"]
         away_team_id = match_data["away_team_api_id"]
+
+        if type(home_team_id) == pandas.Series:
+            home_team_id = home_team_id.iloc[0]
+        if type(away_team_id) == pandas.Series:
+            away_team_id = away_team_id.iloc[0]
+
+        if type(team_id) == pandas.Series:
+            team_id = team_id.iloc[0]
 
         assert team_id == home_team_id or team_id == away_team_id, "team_id must be either home or away team"
         
@@ -512,7 +565,7 @@ class MatchDataManager:
         else:
             return 0
         
-    def get_avg_player_attribute_for_team(sdb, match_data):
+    def get_avg_player_attribute_for_team(sdb, match_data, target_feature=None):
         # get team players
         home_team_players = []
         for i in range(1, 12):
@@ -530,7 +583,7 @@ class MatchDataManager:
             if np.isnan(player_id):
                 home_team_player_attributes.append({})
             else:
-                home_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"]))
+                home_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"], target_feature))
         away_team_player_attributes = []
         for away_team_player in away_team_players:
             player_id = away_team_player
@@ -539,7 +592,7 @@ class MatchDataManager:
             if np.isnan(player_id):
                 away_team_player_attributes.append({})
             else:
-                away_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"]))
+                away_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"], target_feature))
 
         columns = set()
         for player_attributes in home_team_player_attributes:
@@ -547,16 +600,12 @@ class MatchDataManager:
             for column, value in player_attributes.items():
                 if value is None or type(value) == str or (isinstance(value, (np.floating, float)) and (np.isnan(value) or math.isnan(value))):
                     continue
-                if column == "attacking_work_rate":
-                    print(value)
                 columns.add(column)
         for player_attributes in away_team_player_attributes:
             # no string columns
             for column, value in player_attributes.items():
                 if value is None or type(value) == str or (isinstance(value, (np.floating, float)) and (np.isnan(value) or math.isnan(value))):
                     continue
-                if column == "attacking_work_rate":
-                    print(value)
                 columns.add(column)
         # if any player does not have a column, set it to NaN
         for player_attributes in home_team_player_attributes:
@@ -577,7 +626,7 @@ class MatchDataManager:
 
         return averages
     
-    def get_player_attributes_for_teams(sdb, match_data):
+    def get_player_attributes_for_teams(sdb, match_data, target_feature=None):
         # get team players
         home_team_players = []
         for i in range(1, 12):
@@ -624,14 +673,14 @@ class MatchDataManager:
             if np.isnan(player_id):
                 home_team_player_attributes.append({})
             else:
-                home_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"]))
+                home_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"], target_feature))
         away_team_player_attributes = []
         for away_team_player in away_team_players:
             player_id = away_team_player 
             if np.isnan(player_id):
                 away_team_player_attributes.append({})
             else:
-                away_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"]))
+                away_team_player_attributes.append(sdb.get_player(player_id).get_player_attributes(match_data["date"], target_feature))
         # get column names from player attributes that appear in any player
         columns = set()
         for player_attributes in home_team_player_attributes:
@@ -639,16 +688,12 @@ class MatchDataManager:
             for column, value in player_attributes.items():
                 if value is None or type(value) == str or (isinstance(value, (np.floating, float)) and (np.isnan(value) or math.isnan(value))):
                     continue
-                if column == "attacking_work_rate":
-                    print(value)
                 columns.add(column)
         for player_attributes in away_team_player_attributes:
             # no string columns
             for column, value in player_attributes.items():
                 if value is None or type(value) == str or (isinstance(value, (np.floating, float)) and (np.isnan(value) or math.isnan(value))):
                     continue
-                if column == "attacking_work_rate":
-                    print(value)
                 columns.add(column)
         # if any player does not have a column, set it to NaN
         for player_attributes in home_team_player_attributes:
@@ -673,24 +718,49 @@ def get_features_for_matches(
     team_attribute_features: List[str],
     player_avg_attribute_features: List[str],
     player_individual_attribute_features: List[str],
-    label_type="win_loss"
+    label_type="win_loss",
+    include_draw=True
 ):
     '''
     Returns a numpy array of features for the given matches
     '''
     features = []
     output = []
+    columns = []
     for i in range(len(matches)):
-        temp = matches[i].get_features(match_features, team_attribute_features, player_avg_attribute_features, player_individual_attribute_features)
-        # dont consider if contains nan
-        if temp is None or np.isnan(temp).any():
-            continue
-        if label_type == "win_loss":
-            output.append(MatchDataManager.get_game_result_for_team(matches[i].match_data, matches[i].match_data["home_team_api_id"]))
-        elif label_type == "goal_diff":
-            output.append(MatchDataManager.get_goal_diff_for_team(matches[i].match_data, matches[i].match_data["home_team_api_id"]))
-        else:
-            raise ValueError("label_type must be either win_loss or goal_diff")
         if i % 100 == 0:
             print(f"Processed {i} matches")
-    return np.array(features)
+        temp2 = matches[i].get_features(match_features, team_attribute_features, player_avg_attribute_features, player_individual_attribute_features)
+        temp2, columns = temp2
+        # dont consider if contains nan
+        if temp2 is None or np.isnan(temp2).any():
+            continue
+        if label_type == "win_loss":
+            temp = MatchDataManager.get_game_result_for_team(matches[i].match_data, matches[i].match_data["home_team_api_id"])
+            if temp == 1:
+                if include_draw:
+                    output.append([1, 0, 0])
+                else:
+                    output.append(1)
+            elif temp == 0:
+                if include_draw:
+                    output.append([0, 1, 0])
+                else:
+                    continue
+            elif temp == -1:
+                if include_draw:
+                    output.append([0, 0, 1])
+                else:
+                    output.append(0)
+            else:
+                raise ValueError("game result must be either 1, 0, or -1")
+        elif label_type == "goal_diff":
+            output.append(MatchDataManager.get_goal_diff_for_team(matches[i].match_data, matches[i].match_data["home_team_api_id"]))
+        elif label_type == "goal_diff_line":
+            goal_diff = MatchDataManager.get_goal_diff_for_team(matches[i].match_data, matches[i].match_data["home_team_api_id"])
+        else:
+            raise ValueError("label_type must be either win_loss or goal_diff")
+        features.append(temp2)
+
+    # convert to pandas dataframe
+    return np.array(features), np.array(output), np.array(columns)
