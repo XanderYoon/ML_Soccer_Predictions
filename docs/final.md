@@ -292,14 +292,13 @@ Lastly, the model was trained using data about the player attributes. By averagi
 | Estimator | 0.5319 | 0.5319 | 0.5543 | 0.5864  |
 
 Before Hyperparamater fine tuning:
+
 |           | Height_differences  | Weight_differenes  | Rating_differences   | Potential_differences |
-|-----------|---------|---------|----------|-----------|
+|-----------|--------|--------|--------|---------|
 | Estimator | 0.5319 | 0.5319 | 0.6463 | 0.6344  |
 
 
 After Hyperparamater fine tuning:
-
-
 
 |           | Rating_differences  | Potential_differences |
 |-----------|---------|---------|
