@@ -282,8 +282,11 @@ Before Hyperparamater fine tuning:
 
 
 After Hyperparamater fine tuning:
+
+
+
 |           | Rating_differences  | Potential_differences |
-|-----------|---------|---------|----------|-----------|
+|-----------|---------|---------|
 | Estimator | 0.6515 | 0.6431  |
 
 
